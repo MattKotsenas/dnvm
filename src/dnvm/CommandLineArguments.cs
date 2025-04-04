@@ -174,9 +174,17 @@ public abstract partial record DnvmSubCommand
     }
 
     [Command("restore", Summary = "Restore the SDK listed in the global.json file.",
-        Description = "Downloads the SDK in the global.json in or above the current directory to the .dotnet folder in the same directory.")]
+        Description = "Downloads the SDK in the global.json in or above the current directory.")]
     public sealed partial record RestoreCommand : DnvmSubCommand
     {
+        [CommandOption("-l|--local", Description = "Install the sdk into the .dotnet folder in the same directory as global.json.")]
+        public bool? Local { get; init; } = null;
+
+        [CommandOption("-f|--force", Description = "Force install the SDK, even if already installed.")]
+        public bool? Force { get; init; } = null;
+
+        [CommandOption("-v|--verbose", Description = "Print extra debugging info to the console.")]
+        public bool? Verbose { get; init; } = null;
     }
 
     /// <summary>
@@ -310,7 +318,12 @@ public abstract record CommandArguments
         public bool DryRun { get; init; } = false;
     }
 
-    public sealed record RestoreArguments : CommandArguments;
+    public sealed record RestoreArguments : CommandArguments
+    {
+        public bool Local { get; init; } = false;
+        public bool Force { get; init; } = false;
+        public bool Verbose { get; init; } = false;
+    }
 }
 
 public sealed record class CommandLineArguments(CommandArguments? Command)
@@ -434,7 +447,12 @@ public sealed record class CommandLineArguments(CommandArguments? Command)
             }
             case DnvmSubCommand.RestoreCommand r:
             {
-                return new CommandLineArguments(new CommandArguments.RestoreArguments());
+                return new CommandLineArguments(new CommandArguments.RestoreArguments
+                {
+                    Local = r.Local ?? false,
+                    Force = r.Force ?? false,
+                    Verbose = r.Verbose ?? false,
+                });
             }
             case null:
             {

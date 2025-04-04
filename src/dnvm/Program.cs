@@ -67,7 +67,7 @@ public static class Program
             CommandArguments.UntrackArguments o => await UntrackCommand.Run(env, logger, o),
             CommandArguments.UninstallArguments o => await UninstallCommand.Run(env, logger, o),
             CommandArguments.PruneArguments args => await PruneCommand.Run(env, logger, args),
-            CommandArguments.RestoreArguments => await RestoreCommand.Run(env, logger) switch {
+            CommandArguments.RestoreArguments o => await RestoreCommand.Run(env, logger, o) switch {
                 Result<SemVersion, RestoreCommand.Error>.Ok => 0,
                 Result<SemVersion, RestoreCommand.Error>.Err x => (int)x.Value,
             },
