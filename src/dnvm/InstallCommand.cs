@@ -317,10 +317,6 @@ public static partial class InstallCommand
     /// Creates a symlink from the dotnet exe in the dnvm home directory to the dotnet exe in the
     /// sdk install directory.
     /// </summary>
-    /// <remarks>
-    /// Doesn't use a symlink on Windows because the dotnet muxer doesn't properly resolve through
-    /// symlinks.
-    /// </remarks>
     internal static void RetargetSymlink(DnvmEnv dnvmFs, SdkDirName sdkDirName)
     {
         var dnvmHome = dnvmFs.HomeFs.ConvertPathToInternal(UPath.Root);
@@ -336,19 +332,8 @@ public static partial class InstallCommand
                 File.Delete(symlinkPath);
             }
             catch { }
-            if (OperatingSystem.IsWindows())
-            {
-                // On Windows, we can't create a symlink, so create a .cmd file that calls the dotnet.exe
-                File.WriteAllText(symlinkPath, $"""
-    @echo off
-    "%~dp0{sdkDirName.Name}\{Utilities.DotnetExeName}" %*
-    """);
-            }
-            else
-            {
-                // On Unix, we can create a symlink
-                File.CreateSymbolicLink(symlinkPath, Path.Combine(sdkInstallDir, Utilities.DotnetExeName));
-            }
+
+            File.CreateSymbolicLink(symlinkPath, Path.Combine(sdkInstallDir, Utilities.DotnetExeName));
         }
     }
 }

@@ -220,9 +220,7 @@ public static class Utilities
 
     public static string DnvmExeName = "dnvm" + ExeSuffix;
     public static string DotnetExeName = "dotnet" + ExeSuffix;
-    public static string DotnetSymlinkName = "dotnet" + (OperatingSystem.IsWindows()
-        ? ".cmd"
-        : "");
+    public static string DotnetSymlinkName = "dotnet" + ExeSuffix;
 
     public static async Task<string?> ExtractArchiveToDir(string archivePath, string dirPath)
     {
